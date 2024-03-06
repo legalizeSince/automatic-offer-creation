@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+  app:
+    image: 'docker-spring-boot-postgres:latest'
+    build:
+      context: .
+    container_name: app
+    expose:
+      - "8087"
+    ports:
+      - "8087:8080"
+    depends_on:
+      - postgres
+    environment:
+       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/dockerdb
+       SPRING_DATASOURCE_USERNAME: dockeruser
+       SPRING_DATASOURCE_PASSWORD: dockerpassword
+
+
+  postgres:
+       image: 'postgres:13-alpine3.14'
+       container_name: postgres
+       environment:
+        POSTGRES_USER: dockeruser
+        POSTGRES_PASSWORD: dockerpassword
+        POSTGRES_DB: dockerdb
+       ports:
+         - "5432:5432"
+
