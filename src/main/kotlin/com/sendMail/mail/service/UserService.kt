@@ -1,16 +1,20 @@
 package com.sendMail.mail.service
 
 import com.sendMail.mail.domain.Confirmation
+import com.sendMail.mail.domain.PdfSave
 import com.sendMail.mail.domain.User
 import com.sendMail.mail.repository.ConfirmationRespository
+import com.sendMail.mail.repository.PdfRepository
 import com.sendMail.mail.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 
 @Service
 class UserService(@Autowired val userRepository: UserRepository,
-                  @Autowired val confirmationRespository: ConfirmationRespository) {
+                  @Autowired val confirmationRespository: ConfirmationRespository,
+                  @Autowired val pdfRepository: PdfRepository) {
 
 
     fun saveUser(user:User):User{
@@ -25,8 +29,6 @@ class UserService(@Autowired val userRepository: UserRepository,
         val confirmation = Confirmation(user=user)
         confirmationRespository.save(confirmation)
 
-       //Send email to user
-
 
 
         return user
@@ -34,7 +36,22 @@ class UserService(@Autowired val userRepository: UserRepository,
 
     }
 
-    fun verifyToken(token:String):Boolean{
+
+
+    fun getUserByEmail(email:String):User{
+
+        val user = userRepository.findByEmailIgnoreCase(email)
+
+        return user
+    }
+
+
+    fun findUser(id:UUID):Confirmation{
+        val confirmation = confirmationRespository.findByUserId(id)
+        return confirmation
+    }
+
+    fun verifyToken(token:String):User{
 
         val confirmation = confirmationRespository.findByToken(token)
         val user = userRepository.findByEmailIgnoreCase(confirmation.user.email)
@@ -46,7 +63,7 @@ class UserService(@Autowired val userRepository: UserRepository,
 
             //confirmationRespository.delete(confirmation)
 
-            return true
+            return user
         }
 
 

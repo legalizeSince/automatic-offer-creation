@@ -24,6 +24,7 @@ class UserController(@Autowired val userService: UserService) {
             daten = mapOf("user" to newUser),
             message = "User created",
             status = HttpStatus.CREATED,
+
             statusCode = HttpStatus.CREATED.value(),
         )
 
@@ -37,11 +38,11 @@ class UserController(@Autowired val userService: UserService) {
     @GetMapping
     fun confirmNewUserAccount(@RequestParam token:String):ResponseEntity<HttpResponse>{
 
-        val isSuccess = userService.verifyToken(token)
+        val user = userService.verifyToken(token)
 
         val response =  HttpResponse(
             timestamp = LocalDateTime.now().toString(),
-            daten = mapOf("Success" to isSuccess),
+            daten = mapOf("User" to user),
             message = "Account verified!",
             status = HttpStatus.OK,
             statusCode = HttpStatus.OK.value())
